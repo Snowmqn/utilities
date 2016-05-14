@@ -124,20 +124,56 @@ var _ = { };
   // iterator(previousValue, item) for each item. previousValue should be
   // the return value of the previous iterator call.
   _.reduce = function(collection, iterator, initialValue) {
+    if (initialValue === undefined) var previousValue = 0;
+    else var previousValue = initialValue;
+    for (let i=0;i<collection.length;i++) {
+      previousValue = iterator(previousValue, collection[i]);
+    }
+    return previousValue;
   };
 
   // Determine if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
+    var result = false
+    for (let i in collection) {
+      if (collection[i] === target) result = true;
+    }
+    return result;
   };
 
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
+    var result = true
+    if (collection.length === 0) return true;
+    if (iterator) {
+      for ( let i in collection) {
+        if (!iterator(collection[i])) result = false;
+      }
+    }
+    else {
+      for (let i in collection) {
+        if (!collection[i]) result = false;
+      }
+    }
+    return result;
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
+    if (collection.length === 0) return false;
+    if (iterator) {
+      for ( let i in collection) {
+        if (iterator(collection[i])) return true;
+      }
+    }
+    else {
+      for (let i in collection) {
+        if (collection[i]) return true;
+      }
+    }
+    return false;
   };
 
 
@@ -150,7 +186,10 @@ var _ = { };
 
   // Extend a given object with all the properties of the passed in
   // object(s).
-  _.extend = function(obj) {
+  _.extend = function(mod, obj) {
+    for (let i in obj) {
+      mod[i] = obj[i];
+    }
   };
 
   // Like extend, but doesn't ever overwrite a key that already

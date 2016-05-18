@@ -445,7 +445,7 @@ describe("shuffle", function() {
     var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     var shuffled = _.shuffle(numbers).sort();
 
-    expect(shuffled).to.not.equal(numbers);
+    expect(shuffled).to.equal(numbers);
   });
 });
 

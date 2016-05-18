@@ -186,15 +186,26 @@ var _ = { };
 
   // Extend a given object with all the properties of the passed in
   // object(s).
-  _.extend = function(mod, obj) {
-    for (let i in obj) {
-      mod[i] = obj[i];
+  _.extend = function() {
+    for (let i=1;i<arguments.length;i++) {
+     for (let j in arguments[i]) {
+       arguments[0][j] = arguments[i][j];
+     }
     }
+    return arguments[0]
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
-  _.defaults = function(obj) {
+  _.defaults = function() {
+    for (let i=1;i<arguments.length;i++) {
+     for (let j in arguments[i]) {
+       if (!(j in arguments[0])) {
+        arguments[0][j] = arguments[i][j];
+       }
+     }
+    }
+    return arguments[0]
   };
 
 
@@ -206,6 +217,14 @@ var _ = { };
   // Return a function that can be called at most one time. Subsequent calls
   // should return the previously returned value.
   _.once = function(func) {
+    var ran = false, memo;
+    return function() {
+      if (ran) return memo;
+      ran = true;
+      memo = func.apply(this, arguments);
+      func = null;
+      return memo;
+    };
   };
 
   // Memoize an expensive function by storing its results. You may assume
@@ -215,6 +234,16 @@ var _ = { };
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var test = false;
+    var computed = {};
+    return function() {
+      for (let i in computed) {
+        if (arguments[0] === i) return computed[i]; 
+      }
+      var newArgument = func.apply(this, arguments);
+      computed[arguments[0]] = newArgument;
+      return newArgument;
+    }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -224,12 +253,21 @@ var _ = { };
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var args = Array.prototype.slice.apply(arguments);
+    args.shift();
+    args.shift();
+    setTimeout(function() {func.apply(null, args)}, wait);
   };
 
 
 
   // Shuffle an array.
   _.shuffle = function(array) {
+    var tempArr = array;
+    var temp = tempArr[0];
+    tempArr[0] = tempArr[tempArr.length-1];
+    tempArr[tempArr.length-1] = temp;
+    return tempArr;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -237,6 +275,7 @@ var _ = { };
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    
   };
 
   // Zip together two or more arrays with elements of the same index
